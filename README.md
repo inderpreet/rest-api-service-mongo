@@ -11,6 +11,7 @@ Returns Array of AssetStatus Objects from Database
 ### /api/asset-status POST
 
 Updates Asset Status. Request body must be JSON as follows
+
 `
 {
     "title":"My Title",
