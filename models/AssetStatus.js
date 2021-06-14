@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 // Document Schema for how data is stored in MongoDB
 const schema = mongoose.Schema({
-        DockList:[]
+        DockTitle: String,
+        ControlId: String,
+        Desc: String,
+        LastMess: String,
+        MessTime: Number,
 })
 
 // Arguments to model - modelnamestring schemaName, collectionName
