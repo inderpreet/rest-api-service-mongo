@@ -16,30 +16,31 @@ async function addNewRecord(doc) {
 }
 
 async function updateRecord(doc) {
+  
   if (doc.ctrlid != null) {
+  
+    var results;
+    // fetch record from DB
+    await AssetStatus.findOne({ControlId: doc.ctrlid}, (err, docs)=>{
+      if(err){
+        console.log(err);
+      } else {
+        results = docs;
+      }
+    })
+
     const updateRecord = await AssetStatus.findOneAndUpdate(
       {
         ControlId: doc.ctrlid,
       },
       {
+        DockTitle: doc.dockTitle==null?results.DockTitle:doc.dockTitle,
         LastMess: doc.mess,
         MessTime: Date.now(),
       }
     );
     updateRecord.save();
     return "Status Updated!: " + doc.ctrlid;
-  } else if (doc.dockTitle != null) {
-    const updateRecord = await AssetStatus.findOneAndUpdate(
-      {
-        DockTitle: doc.dockTitle,
-      },
-      {
-        LastMess: doc.mess,
-        MessTime: Date.now(),
-      }
-    );
-    updateRecord.save();
-    return "Status Updated!: " + doc.dockTitle;
   } else {
     return "Bad Arguments!";
   }
@@ -80,7 +81,7 @@ router.post("/asset-status", async (req, res) => {
       })
     }
   } 
-  
+
   res.send(ret);
 });
 
