@@ -1,13 +1,13 @@
+if(process.env.DB_URL == null){
+  require('dotenv').config()
+}
+
 const express = require("express");
 const mongoose = require("mongoose");
 const routes = require("./routes");
 
-if(process.env.FOO == null){
-        require('dotenv').config()
-}
-
 mongoose
-  .connect("mongodb://localhost:27017/AssetData", {
+  .connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
@@ -17,9 +17,7 @@ mongoose
     app.use(express.json());
     app.use("/api", routes);
 
-    app.listen(5000, () => {
+    app.listen(process.env.PORT, () => {
       console.log("Server Started");
     });
   });
-
-console.log(process.env.FOO);
