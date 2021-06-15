@@ -2,6 +2,49 @@ const express = require("express");
 const AssetStatus = require("./models/AssetStatus");
 const router = express.Router();
 
+async function addNewRecord(doc) {
+  if (doc.ctrlid != null) {
+    const newRecord = new AssetStatus({
+      DockTitle: doc.dockTitle || "Dock",
+      ControlId: doc.ctrlid,
+      LastMess: doc.mess,
+      MessTime: Date.now(),
+    });
+    newRecord.save();
+  }
+  return ( "New record Added: " + doc.dockTitle + " and " + doc.ctrlid );
+}
+
+async function updateRecord(doc) {
+  if (doc.ctrlid != null) {
+    const updateRecord = await AssetStatus.findOneAndUpdate(
+      {
+        ControlId: doc.ctrlid,
+      },
+      {
+        LastMess: doc.mess,
+        MessTime: Date.now(),
+      }
+    );
+    updateRecord.save();
+    return "Status Updated!: " + doc.ctrlid;
+  } else if (doc.dockTitle != null) {
+    const updateRecord = await AssetStatus.findOneAndUpdate(
+      {
+        DockTitle: doc.dockTitle,
+      },
+      {
+        LastMess: doc.mess,
+        MessTime: Date.now(),
+      }
+    );
+    updateRecord.save();
+    return "Status Updated!: " + doc.dockTitle;
+  } else {
+    return "Bad Arguments!";
+  }
+}
+
 // Route to Get status data - GET REQUEST
 router.get("/asset-status", async (req, res) => {
   const status = await AssetStatus.find();
@@ -17,21 +60,24 @@ router.post("/asset-status", async (req, res) => {
 
   if ((dockTitle == null && ctrlid == null) | (mess == null)) {
     ret = "Insufficient information. Please check request body.";
-    // res.send(ret);
-    // return;
-  } else if ( ctrlid != null ) {
+  } else if (ctrlid != null) {
     const searchByCtrlId = await AssetStatus.find({
       ControlId: ctrlid,
     });
-    if ( searchByCtrlId.length == 0 ){
-      const newRecord = new AssetStatus({
-        DockTitle: dockTitle,
-        ControlId: ctrlid,
-        LastMess: mess,
-        MessTime: Date.now(),
+    if (searchByCtrlId.length == 0) {
+      // create new record
+      ret = await addNewRecord({
+        dockTitle: dockTitle,
+        ctrlid: ctrlid,
+        mess: mess,
       });
-      newRecord.save();
-      ret = "Message Saved: " + dockTitle + " added with CtrlId: " + ctrlid;
+    } else {
+      // existing record found- update
+      ret = await updateRecord({
+        dockTitle:dockTitle,
+        ctrlid: ctrlid,
+        mess: mess,
+      })
     }
   } else if (dockTitle != null) {
     // Check for existing records with same title.
@@ -47,33 +93,23 @@ router.post("/asset-status", async (req, res) => {
     } else if (searchResults.length == 0 && ctrlid != null) {
       // no record found but ctrl id is available
       // ... create a new
-      const newRecord = new AssetStatus({
-        DockTitle: dockTitle,
-        ControlId: ctrlid,
-        LastMess: mess,
-        MessTime: Date.now(),
-      });
-      newRecord.save();
-      ret = "Message Saved: " + dockTitle + " added with CtrlId: " + ctrlid;
+      ret = await addNewRecord({
+        dockTitle: dockTitle,
+        ctrlid: ctrlid,
+        mess: mess,
+      })
     } else if (searchResults.length != 0) {
       // record found. Update using title.
-      const updateRecord = await AssetStatus.findOneAndUpdate(
-        {
-          DockTitle: dockTitle,
-        },
-        {
-          LastMess: mess,
-          MessTime: Date.now(),
-        }
-      );
-      updateRecord.save();
-      ret = "Status Updated!: " + dockTitle;
+      ret = await updateRecord({
+        dockTitle: dockTitle,
+        ctrlid: ctrlid,
+        mess: mess,
+      })
     }
   } else if (ctrlid != null) {
     const searchResults2 = await AssetStatus.find({
       ControlId: ctrlid,
     });
-
     if (searchResults2.length == 0) {
       ret = "No exisiting Ctrls Found";
     }
