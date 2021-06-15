@@ -21,3 +21,5 @@ package-lock.json
 .idea
 
 npm-debug.log*
+
+.env
