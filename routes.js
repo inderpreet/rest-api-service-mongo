@@ -19,6 +19,20 @@ router.post("/asset-status", async (req, res) => {
     ret = "Insufficient information. Please check request body.";
     // res.send(ret);
     // return;
+  } else if ( ctrlid != null ) {
+    const searchByCtrlId = await AssetStatus.find({
+      ControlId: ctrlid,
+    });
+    if ( searchByCtrlId.length == 0 ){
+      const newRecord = new AssetStatus({
+        DockTitle: dockTitle,
+        ControlId: ctrlid,
+        LastMess: mess,
+        MessTime: Date.now(),
+      });
+      newRecord.save();
+      ret = "Message Saved: " + dockTitle + " added with CtrlId: " + ctrlid;
+    }
   } else if (dockTitle != null) {
     // Check for existing records with same title.
     const searchResults = await AssetStatus.find({
@@ -55,6 +69,18 @@ router.post("/asset-status", async (req, res) => {
       updateRecord.save();
       ret = "Status Updated!: " + dockTitle;
     }
+  } else if (ctrlid != null) {
+    const searchResults2 = await AssetStatus.find({
+      ControlId: ctrlid,
+    });
+
+    if (searchResults2.length == 0) {
+      ret = "No exisiting Ctrls Found";
+    }
+
+    ret = "based on ctrtl id";
+  } else {
+    ret = "Unimplemented Code Section.";
   }
   res.send(ret);
 });
