@@ -58,9 +58,9 @@ router.post("/asset-status", async (req, res) => {
   const ctrlid = req.body.ctrlid;
   var ret = "";
 
-  if ((dockTitle == null && ctrlid == null) | (mess == null)) {
+  if (ctrlid == null | (mess == null)) {
     ret = "Insufficient information. Please check request body.";
-  } else if (ctrlid != null) {
+  } else {
     const searchByCtrlId = await AssetStatus.find({
       ControlId: ctrlid,
     });
@@ -79,45 +79,8 @@ router.post("/asset-status", async (req, res) => {
         mess: mess,
       })
     }
-  } else if (dockTitle != null) {
-    // Check for existing records with same title.
-    const searchResults = await AssetStatus.find({
-      DockTitle: dockTitle,
-    });
-    if (searchResults.length == 0 && ctrlid == null) {
-      // if no record found and no ctrlid supplied.
-      ret =
-        "Message Rejected: " +
-        dockTitle +
-        " not found and CtrlID specified in request body.";
-    } else if (searchResults.length == 0 && ctrlid != null) {
-      // no record found but ctrl id is available
-      // ... create a new
-      ret = await addNewRecord({
-        dockTitle: dockTitle,
-        ctrlid: ctrlid,
-        mess: mess,
-      })
-    } else if (searchResults.length != 0) {
-      // record found. Update using title.
-      ret = await updateRecord({
-        dockTitle: dockTitle,
-        ctrlid: ctrlid,
-        mess: mess,
-      })
-    }
-  } else if (ctrlid != null) {
-    const searchResults2 = await AssetStatus.find({
-      ControlId: ctrlid,
-    });
-    if (searchResults2.length == 0) {
-      ret = "No exisiting Ctrls Found";
-    }
-
-    ret = "based on ctrtl id";
-  } else {
-    ret = "Unimplemented Code Section.";
-  }
+  } 
+  
   res.send(ret);
 });
 
