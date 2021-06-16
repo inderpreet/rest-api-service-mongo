@@ -1,6 +1,11 @@
-const express = require("express");
-const AssetStatus = require("./models/AssetStatus");
-const router = express.Router();
+const AssetStatus = require("../models/AssetStatus");
+
+module.exports = {
+        addNewRecord,
+        updateRecord,
+        getAllRecords,
+        updateStatusString,
+}
 
 async function addNewRecord(doc) {
   if (doc.ctrlid != null) {
@@ -12,48 +17,44 @@ async function addNewRecord(doc) {
     });
     newRecord.save();
   }
-  return ( "New record Added: " + doc.dockTitle + " and " + doc.ctrlid );
+  return "New record Added: " + doc.dockTitle + " and " + doc.ctrlid;
 }
 
 async function updateRecord(doc) {
-  
   if (doc.ctrlid != null) {
-  
     var results;
     // fetch record from DB
-    await AssetStatus.findOne({ControlId: doc.ctrlid}, (err, docs)=>{
-      if(err){
+    await AssetStatus.findOne({ ControlId: doc.ctrlid }, (err, docs) => {
+      if (err) {
         console.log(err);
       } else {
         results = docs;
       }
-    })
+    });
 
-    const updateRecord = await AssetStatus.findOneAndUpdate(
+    const upRecord = await AssetStatus.findOneAndUpdate(
       {
         ControlId: doc.ctrlid,
       },
       {
-        DockTitle: doc.dockTitle==null?results.DockTitle:doc.dockTitle,
+        DockTitle: doc.dockTitle == null ? results.DockTitle : doc.dockTitle,
         LastMess: doc.mess,
         MessTime: Date.now(),
       }
     );
-    updateRecord.save();
+    upRecord.save();
     return "Status Updated!: " + doc.ctrlid;
   } else {
     return "Bad Arguments!";
   }
 }
 
-// Route to Get status data - GET REQUEST
-router.get("/asset-status", async (req, res) => {
+async function getAllRecords(req, res) {
   const status = await AssetStatus.find();
   res.send(status);
-});
+}
 
-// Route to Save status - POST REQUEST
-router.post("/asset-status", async (req, res) => {
+async function updateStatusString(req, res) {
   const dockTitle = req.body.title;
   const mess = req.body.mess;
   const ctrlid = req.body.ctrlid;
@@ -83,6 +84,4 @@ router.post("/asset-status", async (req, res) => {
   } 
 
   res.send(ret);
-});
-
-module.exports = router;
+}
