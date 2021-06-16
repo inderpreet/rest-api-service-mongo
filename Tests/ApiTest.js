@@ -10,8 +10,8 @@ async function getAssetStatus(){
   })
 }
 
-async function getAssetStatus(){
-  await axios.get("http://localhost:5000/api/dock-traffic")
+async function getDockStatus(){
+  await axios.get("http://localhost:5000/api/asset-status/dock-status")
   .then((res) => {
     console.log(res.data);
   })
@@ -21,5 +21,5 @@ async function getAssetStatus(){
 }
 
 
-getAssetStatus();
-getDockTraffic();
+// getAssetStatus();
+getDockStatus();
