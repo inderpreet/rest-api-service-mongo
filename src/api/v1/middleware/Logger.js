@@ -1,5 +1,9 @@
 const log = (str) => {
-  console.log(str);
+    console.log(str);
 };
 
-module.exports = { log };
+const logError = (str) => {
+    console.log(str);
+}
+
+module.exports = {log};
