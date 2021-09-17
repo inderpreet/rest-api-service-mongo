@@ -6,7 +6,7 @@ routes.get('/', (req, res) => {
   res.status(200).json({ message: 'Connected!' });
 });
 
-routes.use("/test", test);
+routes.use("/test", test);  // Add Test Routes. Use this as a template
 routes.use("/asset-status", assetStatusRoutes);
 
 module.exports = routes;
