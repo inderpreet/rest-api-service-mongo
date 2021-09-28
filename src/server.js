@@ -19,7 +19,7 @@ try {
             app.use(express.json());
             app.use("/api", routes);
             app.get("/", (req, res, next) => {
-                res.send("Blue Giant Equipment Corp. Data API v1.0 <br>Please use API keys and Endpoints.");
+                res.send("Blue Giant Equipment Corp. Data API v1.0 . Please use API keys and Endpoints.");
             })
             app.listen(process.env.PORT, () => {
                 console.log(`REST API Server Started at ${process.env.PORT}`);

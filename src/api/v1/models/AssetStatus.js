@@ -8,6 +8,11 @@ const schema = mongoose.Schema({
     },
     DockTitle: String,
     Desc: String,
+    DockFaceDirection: {
+      type: String,
+      enum: ["North", "South", "East", "West"],
+      default: "South",
+    },
     LastMess: String,
     MessTime: Number,
     CurrentState: {
