@@ -20,7 +20,7 @@ const schema = mongoose.Schema({
     LocationType: {
         type: String,
         enum: ["Normal", "Blocked", "Frozen"],
-        default: "Blocked",
+        default: "Normal",
     },
     LastMess: String,
     MessTime: Number,
