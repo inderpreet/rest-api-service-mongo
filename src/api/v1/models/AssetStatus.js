@@ -13,6 +13,15 @@ const schema = mongoose.Schema({
       enum: ["North", "South", "East", "West"],
       default: "South",
     },
+    LocationIndex: {
+        type: Number,
+        default: 0,
+    },
+    LocationType: {
+        type: String,
+        enum: ["Normal", "Blocked", "Frozen"],
+        default: "Blocked",
+    },
     LastMess: String,
     MessTime: Number,
     CurrentState: {
